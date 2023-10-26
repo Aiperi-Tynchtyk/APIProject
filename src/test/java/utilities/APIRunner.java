@@ -42,6 +42,7 @@ public class APIRunner {
         Response response = RestAssured.given().auth().oauth2(token).params(parameters)
                 .get(url);
         System.out.println("status code: " + response.statusCode());
+        response.prettyPrint();
 
         ObjectMapper mapper = new ObjectMapper();
         try {

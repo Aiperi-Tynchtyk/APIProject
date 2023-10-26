@@ -136,11 +136,34 @@ public class CashWiseSellerTest {
     }
 
     @Test
-    public void getSellersList(){
+    public void getSellersList() {
+        String path = "/api/myaccount/sellers";
+        Map<String, Object> params = new HashMap<>();
+        params.put("isArchived", false);
+        params.put("page", 2);
+        params.put("size", 10);
+
+        APIRunner.runGet(path, params);
+
+        System.out.println(APIRunner.getCustomResponses().getResponseBody());
+        int counter = 0;
+        for (CustomResponses cr: APIRunner.getCustomResponses().getResponses()) {
+            System.out.println("company name: " + cr.getCompany_name());
+            counter ++;
+        }
+        System.out.println("total: " + counter);
+    }
+
+
+    @Test
+    public void getSellerCompany(){
+        //get company name of each seller
+        // use for loop, use POJO from CustomResponse class to get company name
+        //print total number of sellers
         String path="/api/myaccount/sellers";
         Map<String, Object> parameters=new HashMap<>();
 
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 1; i <= 3; i++) {
             parameters.put("isArchived",false);
             parameters.put("page",i);
             parameters.put("size",10);
@@ -152,18 +175,21 @@ public class CashWiseSellerTest {
                 System.out.println(APIRunner.getCustomResponses().getResponses().get(j).getCompany_name());
             }
         }
+    }
 
-
-
-
-//        APIRunner.runGet(path,parameters);
-//        System.out.println(APIRunner.getCustomResponses().getResponseBody());
-        //get company name of each seller
-        // use for loop, use POJO from CustomResponse class to get company name
-        //print total number of sellers 
-
+    @Test
+    public void createNewSeller(){
+        Faker faker=new Faker();
+        String path="/api/myaccount/sellers";
+        RequestBody requestBody=new RequestBody();
+        requestBody.setCompany_name(faker.company().name());
+        requestBody.setSeller_name(faker.name().fullName());
+        requestBody.setEmail(faker.internet().emailAddress());
+        requestBody.setAddress(faker.address().streetName());
+        requestBody.setPhone_number(faker.phoneNumber().cellPhone());
 
     }
+
 
 
 
