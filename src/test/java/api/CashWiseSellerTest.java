@@ -148,7 +148,7 @@ public class CashWiseSellerTest {
         System.out.println(APIRunner.getCustomResponses().getResponseBody());
         int counter = 0;
         for (CustomResponses cr: APIRunner.getCustomResponses().getResponses()) {
-            System.out.println("company name: " + cr.getCompany_name());
+            System.out.println("company name: " + cr.getCompanyName());
             counter ++;
         }
         System.out.println("total: " + counter);
@@ -172,7 +172,7 @@ public class CashWiseSellerTest {
 
             int size = APIRunner.getCustomResponses().getResponses().size();
             for (int j = 0; j < size; j++) {
-                System.out.println(APIRunner.getCustomResponses().getResponses().get(j).getCompany_name());
+                System.out.println(APIRunner.getCustomResponses().getResponses().get(j).getCompanyName());
             }
         }
     }
@@ -187,6 +187,58 @@ public class CashWiseSellerTest {
         requestBody.setEmail(faker.internet().emailAddress());
         requestBody.setAddress(faker.address().streetName());
         requestBody.setPhone_number(faker.phoneNumber().cellPhone());
+
+        APIRunner.runPOST(path,requestBody);
+        System.out.println(APIRunner.getCustomResponses().getResponseBody());
+
+
+    }
+
+    @Test
+    public void createNewSeller2(){
+        /*
+        get seller-> get seller API using id from response of previous API hit
+        cross check if seller id in create API and seller id in get API are matching
+         */
+
+       // create seller -> hit seller API
+        Faker faker=new Faker();
+        String path="/api/myaccount/sellers";
+        RequestBody requestBody=new RequestBody();
+        String company=faker.company().name();
+        String sellerName=faker.name().fullName();
+        String email=faker.internet().emailAddress();
+        String address=faker.address().streetName();
+        String phoneNum=faker.phoneNumber().cellPhone();
+
+        requestBody.setCompany_name(company);
+        requestBody.setSeller_name(sellerName);
+        requestBody.setEmail(email);
+        requestBody.setAddress(address);
+        requestBody.setPhone_number(phoneNum);
+
+        APIRunner.runPOST(path,requestBody);
+
+        //get response from that response get seller id
+
+        int id= APIRunner.getCustomResponses().getSeller_id(); //we store id from already created seller
+        System.out.println("seller id: "+ id);
+
+        // hit get seller API
+
+        String pathForGetSeller="/api/myaccount/sellers/"+id; //here we want to get seller with id, which stored recently
+        //we provide first url and provide id from recently created seller
+
+        APIRunner.runGet(pathForGetSeller);
+
+        Assert.assertEquals(company,APIRunner.getCustomResponses().getCompanyName());
+        Assert.assertEquals(sellerName,APIRunner.getCustomResponses().getSeller_name());
+        Assert.assertEquals(email,APIRunner.getCustomResponses().getEmail());
+        Assert.assertEquals(address,APIRunner.getCustomResponses().getAddress());
+        Assert.assertEquals(phoneNum,APIRunner.getCustomResponses().getPhone_number());
+
+
+
 
     }
 
